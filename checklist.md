@@ -1,0 +1,13 @@
+- [ ] un modifier onlyVoters
+- [ ] une function getVoters(address)
+- [ ] une function getOneProposal(idproposal)
+- [ ] une function addVoter modifier onlyOwner
+- [ ] une function addProposal
+- [ ] une function setVote
+- [ ] une function startProposalRegistering (changer workflow status)
+- [ ] une function startVotingSession
+- [ ] une function endVotingSession
+- [ ] une function tallyVotes - compte de votes
+- [ ] winningProposalId peut etre en public
+- [ ] workflowStatus peut etre en public
+- [ ] tout le reste devrait etre en private et necessite un getter
