@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 // Le smart contract doit être nommé `Voting`
 contract Voting is Ownable {
     // Le smart contract doit définir un uint représentant la proposition gagnante
-    uint public winningProposalId;
 
     // Le smart contract doit définir les structures de données suivantes :
     struct Voter {
@@ -23,11 +22,13 @@ contract Voting is Ownable {
         uint voteCount;
     }
 
-    Proposal[] public proposals;
-    mapping(address => bool) voters;
+    Proposal[] private proposals;
+    uint private winningProposalId = type(uint).max;
+
+    mapping(address => bool) whitelist;
 
     modifier onlyVoter() {
-        require(voters[msg.sender], "Restricted to authorized voters");
+        require(whitelist[msg.sender], "Restricted to authorized voters");
         _;
     }
 
@@ -58,16 +59,41 @@ contract Voting is Ownable {
 
     // function getOneProposal(proposalId) private returns (proposal) {}
 
-    // function addVoter() onlyOwner {}
+    function addVoter(address _address) external onlyOwner {
+        whitelist[_address] = true;
+    }
 
-    // function addProposal(proposal) onlyVoter {}
+    function getVoter(address _address) external view returns (bool) {
+        return whitelist[_address];
+    }
 
-    // function setVote(proposalId) {}
+    function addProposal(string calldata _description) external onlyVoter {
+        Proposal memory newProposal = Proposal(_description, 0);
+        proposals.push(newProposal);
+    }
 
-    // // changer workflow status
-    // function startProposalRegistration() onlyOwner {}
+    function getProposals() external view returns (Proposal[] memory) {
+        return proposals;
+    }
 
-    // function startVotingSession() onlyOwner {}
+    function castVote(uint _proposalId) external onlyVoter {
+        require(_proposalId <= proposals.length, "Invalid proposal ID");
+        Proposal storage selectedProposal = proposals[_proposalId];
+        selectedProposal.voteCount++;
+    }
 
-    // function endVotingSession() onlyOwner {}
+    function getWinningProposal() external view returns (uint) {
+        require(
+            winningProposalId != type(uint).max,
+            "The vote has yet to decide a winner"
+        );
+        return winningProposalId;
+    }
 }
+
+// // changer workflow status
+// function startProposalRegistration() onlyOwner {}
+
+// function startVotingSession() onlyOwner {}
+
+// function endVotingSession() onlyOwner {}
