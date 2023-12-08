@@ -8,19 +8,19 @@ Un smart contract de vote pour une petite organisation avec les fonctionnalités
 - [x] Les électeurs peuvent soumettre des propositions
 - [x] Les électeurs peuvent voter pour une proposition
 - [x] Les votes sont visibles de tous les électeurs
-- [ ] La proposition gagnante est déterminée à la majorité simple
-- [ ] Le code est sécurisé et respecte les ordres déterminés
+- [x] La proposition gagnante est déterminée à la majorité simple
+- [x] Le code est sécurisé et respecte les ordres déterminés
 
 ## Processus de vote
 
 1. [x] L'administrateur ajoute les électeurs à une liste blanche
-2. [ ] L'administrateur débute la session d'enregistrement des propositions
+2. [x] L'administrateur débute la session d'enregistrement des propositions
 3. [x] Les électeurs enregistrent leur(s) proposition(s)
-4. [ ] L'administrateur met fin à la session d'enregistrement
-5. [ ] L'administrateur débute la session de vote
+4. [x] L'administrateur met fin à la session d'enregistrement
+5. [x] L'administrateur débute la session de vote
 6. [x] Les électeurs votent pour leur proposition préférée
-7. [ ] L'administrateur met fin à la session de vote
-8. [ ] L'administrateur comptabilise les votes
+7. [x] L'administrateur met fin à la session de vote
+8. [x] L'administrateur comptabilise les votes
 9. [x] La proposition gagnante est visible de tous
 
 ## Recommandations et exigences
@@ -49,7 +49,7 @@ Un smart contract de vote pour une petite organisation avec les fonctionnalités
   uint winningProposalId
   ```
 
-- [ ] ou bien une fonction `getWinner` qui retourne la proposition gagnante
+- [x] ou bien une fonction `getWinner` qui retourne la proposition gagnante
 
 - [x] Le smart contract doit définir une énumération représentant les étapes du vote comme suit :
 

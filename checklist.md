@@ -3,11 +3,11 @@
 - [x] une function getVoter (address)
 - [x] une function getOneProposal(idproposal)
 - [x] une function addProposal
-- [ ] une function setVote
+- [x] une function setVote
 - [ ] une function startProposalRegistering (changer workflow status)
-- [ ] une function startVotingSession
-- [ ] une function endVotingSession
-- [ ] une function tallyVotes - compte de votes
+- [x] une function startVotingSession
+- [x] une function endVotingSession
+- [x] une function tallyVotes - compte de votes
 - [x] winningProposalId peut etre en public
 - [x] workflowStatus peut etre en public
-- [ ] tout le reste devrait etre en private et necessite un getter
+- [x] tout le reste devrait etre en private et necessite un getter
