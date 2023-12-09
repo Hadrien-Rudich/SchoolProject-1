@@ -4,7 +4,7 @@
 - [x] une function getOneProposal(idproposal)
 - [x] une function addProposal
 - [x] une function setVote
-- [ ] une function startProposalRegistering (changer workflow status)
+- [x] une function startProposalRegistering (changer workflow status)
 - [x] une function startVotingSession
 - [x] une function endVotingSession
 - [x] une function tallyVotes - compte de votes
