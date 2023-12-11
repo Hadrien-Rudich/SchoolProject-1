@@ -15,10 +15,16 @@ contract Voting is Ownable {
         string description;
         uint voteCount;
     }
+    uint private winningProposalId;
 
-    uint private winningProposalId = type(uint).max;
+    // array that helps with assertions and prevents overusing loops
     Voter[] private voters;
+    // array that makes returning proposals easier, see get functions
     Proposal[] private proposals;
+
+    // variable ensuring at least one vote has been cast, see endVotingSession
+    bool private haveVotesBeenCast = false;
+
     mapping(address => Voter) registeredVoters;
 
     modifier onlyVoter() {
@@ -61,16 +67,13 @@ contract Voting is Ownable {
             "Voter registration window has ended"
         );
 
-        require(_address != msg.sender, "Admin cannot be registered as voter");
+        require(_address != msg.sender, "Admin cannot self-register as voter");
+
+        // initializing new voters with a votedProposalId at 0 which is a default non-valid ID for a proposal
         Voter memory newVoter = Voter(true, false, 0);
         registeredVoters[_address] = newVoter;
         voters.push(newVoter);
         emit VoterRegistered(_address);
-    }
-
-    function getVoters() external view returns (Voter[] memory) {
-        require(voters.length > 0, "No registered voter");
-        return voters;
     }
 
     function getVoter(address _address) external view returns (Voter memory) {
@@ -88,7 +91,7 @@ contract Voting is Ownable {
         );
         Proposal memory newProposal = Proposal(_description, 0);
         proposals.push(newProposal);
-        emit ProposalRegistered(proposals.length - 1);
+        emit ProposalRegistered(proposals.length);
     }
 
     function getProposals() external view returns (Proposal[] memory) {
@@ -100,22 +103,6 @@ contract Voting is Ownable {
         return proposals;
     }
 
-    function castVote(uint _proposalId) external onlyVoter {
-        require(
-            defaultStatus == WorkflowStatus.VotingSessionStarted,
-            "Voting window currently closed"
-        );
-        require(_proposalId < proposals.length, "Invalid proposal ID");
-        require(
-            registeredVoters[msg.sender].hasVoted == false,
-            "A vote has already been submitted"
-        );
-        proposals[_proposalId].voteCount++;
-        registeredVoters[msg.sender].hasVoted = true;
-        registeredVoters[msg.sender].votedProposalId = _proposalId;
-        emit Voted(msg.sender, _proposalId);
-    }
-
     function getWinningProposal() external view returns (uint) {
         require(
             defaultStatus == WorkflowStatus.VotesTallied,
@@ -125,26 +112,28 @@ contract Voting is Ownable {
         return winningProposalId;
     }
 
-    function tallyVotes() external onlyOwner returns (Proposal memory) {
+    function castVote(uint _proposalId) external onlyVoter {
         require(
-            defaultStatus == WorkflowStatus.VotingSessionEnded,
-            "Voting tally window has yet to start"
+            defaultStatus == WorkflowStatus.VotingSessionStarted,
+            "Voting window currently closed"
+        );
+        require(
+            _proposalId > 0 && _proposalId <= proposals.length,
+            "Invalid proposal ID"
+        );
+        require(
+            !registeredVoters[msg.sender].hasVoted,
+            "A vote has already been registered"
         );
 
-        Proposal memory mostVotedProposal = Proposal("", 0);
+        // Variable created for zero-indexed array
+        uint proposalIndex = _proposalId - 1;
+        proposals[proposalIndex].voteCount++;
+        haveVotesBeenCast = true;
+        registeredVoters[msg.sender].hasVoted = true;
+        registeredVoters[msg.sender].votedProposalId = _proposalId;
 
-        for (uint i = 0; i < proposals.length; i++) {
-            if (proposals[i].voteCount > mostVotedProposal.voteCount) {
-                mostVotedProposal = proposals[i];
-                winningProposalId = i;
-            }
-        }
-        emit WorkflowStatusChange(
-            WorkflowStatus.VotingSessionEnded,
-            WorkflowStatus.VotesTallied
-        );
-        defaultStatus = WorkflowStatus.VotesTallied;
-        return mostVotedProposal;
+        emit Voted(msg.sender, _proposalId);
     }
 
     function startProposalRegistration() external onlyOwner {
@@ -214,20 +203,34 @@ contract Voting is Ownable {
             defaultStatus == WorkflowStatus.VotingSessionStarted,
             "Voting session has not started"
         );
-        bool hasVotes = false;
-        for (uint i = 0; i < proposals.length; i++) {
-            if (proposals[i].voteCount > 0) {
-                hasVotes = true;
-                break;
-            }
-        }
-
-        require(hasVotes, "No votes have been cast");
+        require(haveVotesBeenCast, "No votes have been cast");
 
         emit WorkflowStatusChange(
             WorkflowStatus.VotingSessionStarted,
             WorkflowStatus.VotingSessionEnded
         );
         defaultStatus = WorkflowStatus.VotingSessionEnded;
+    }
+
+    function tallyVotes() external onlyOwner {
+        require(
+            defaultStatus == WorkflowStatus.VotingSessionEnded,
+            "Voting tally window has yet to start"
+        );
+
+        Proposal memory mostVotedProposal = Proposal("", 0);
+        for (uint i = 0; i < proposals.length; i++) {
+            if (proposals[i].voteCount > mostVotedProposal.voteCount) {
+                mostVotedProposal = proposals[i];
+                // +1 so that index 0 is reserved for a default non-existing winningProposalId
+                winningProposalId = i + 1;
+            }
+        }
+
+        emit WorkflowStatusChange(
+            WorkflowStatus.VotingSessionEnded,
+            WorkflowStatus.VotesTallied
+        );
+        defaultStatus = WorkflowStatus.VotesTallied;
     }
 }

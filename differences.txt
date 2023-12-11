@@ -1,13 +1,14 @@
 VOTING.SOL
 
 Considering the requirements & instructions for creating this Voting System, there was room for interpretation and personal preference.
-As such, you will find below the arbitrary decisions I made for the basic implementation: 
+As such, you will find below the arbitrary decisions I made for my basic implementation: 
 
 - The Admin cannot self-register as voter
 - At least 3 voters are needed
 - At least 2 proposals are needed
 - At least 1 vote is needed
 - Ties are not resolved,  in such an event, the proposal with the smaller index wins
+- proposalId starts at 1, leaving 0 as default non-existing proposalId
 
 
 VOTINGPLUS.SOL
@@ -15,8 +16,11 @@ VOTINGPLUS.SOL
 In a more advanced version, I implemented the following improvements:
 
 - Voters are now subject to a new vote that determines whether they agree to the Admin takin part in voting & submitting
-- There is no minimum amount of proposal/vote anymore
+- Voters can now delegate their vote
 - There is a runoff vote for resolving ties
+
+
+- There is no minimum amount of proposal/vote anymore
 - Workflow changes now happen over time automatically
 - Adding a history for tracking proposals that won a vote
 
