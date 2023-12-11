@@ -1,5 +1,10 @@
 # Projet#1 - Système de vote
 
+## Disclaimer
+
+These were the project hard requirements for `Voting.sol`.
+For grading purposes, they were set in stone.
+
 ## Objectif
 
 Un smart contract de vote pour une petite organisation avec les fonctionnalités suivantes:
