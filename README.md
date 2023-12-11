@@ -21,6 +21,8 @@ I made little to no effort on refactoring and making my code more modular. At th
 
 To the people that may fiind the project very difficult to sift through, please undestand my perspective and accept my apologies!
 
+Additionally, I found that testing was extremely cumbersome & timeconsuming through Remix, it's likely there are issues overall, and flaws in the logic here and there due to the tedious experience in the aforementioned tool.
+
 ## Features
 
 - **Voter Registration**: Admins can register voters, ensuring controlled participation
