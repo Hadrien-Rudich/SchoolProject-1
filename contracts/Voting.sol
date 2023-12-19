@@ -17,8 +17,6 @@ contract Voting is Ownable {
     }
     uint private winningProposalId;
 
-    // array that helps with assertions and prevents overusing loops
-    Voter[] private voters;
     // array that makes returning proposals easier, see get functions
     Proposal[] private proposals;
 
@@ -72,7 +70,6 @@ contract Voting is Ownable {
         // initializing new voters with a votedProposalId at 0 which is a default non-valid ID for a proposal
         Voter memory newVoter = Voter(true, false, 0);
         registeredVoters[_address] = newVoter;
-        voters.push(newVoter);
         emit VoterRegistered(_address);
     }
 
@@ -146,8 +143,6 @@ contract Voting is Ownable {
             "Proposal registration cannot be started"
         );
 
-        require(voters.length >= 3, "At least 3 registered voters needed");
-
         emit WorkflowStatusChange(
             WorkflowStatus.RegisteringVoters,
             WorkflowStatus.ProposalsRegistrationStarted
@@ -163,11 +158,6 @@ contract Voting is Ownable {
         require(
             defaultStatus == WorkflowStatus.ProposalsRegistrationStarted,
             "Proposal registration cannot be ended"
-        );
-
-        require(
-            proposals.length >= 2,
-            "At least 2 registered proposals needed"
         );
 
         emit WorkflowStatusChange(
